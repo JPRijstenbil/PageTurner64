@@ -32,6 +32,9 @@ namespace piano_pdf_tool
         public Form1()
         {
             InitializeComponent();
+            axAcroPDF1.setShowScrollbars(false);
+            axAcroPDF2.setShowScrollbars(false);
+            SetSize();
 
             SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED); // prevents screen from locking
 
@@ -51,22 +54,14 @@ namespace piano_pdf_tool
             {
                 filename = fd.FileName;
                 axAcroPDF1.src = filename;
-                axAcroPDF1.setViewScroll("FitB", (float)numericUpDown1.Value);
-
                 axAcroPDF2.src = filename;
-                axAcroPDF2.setViewScroll("FitB", (float)numericUpDown1.Value);
-
-                this.Width = axAcroPDF1.Width + axAcroPDF2.Width;
-
-                axAcroPDF1.Width = (int)(0.5 * this.Width);
-                axAcroPDF2.Width = (int)(0.5 * this.Width);
-                axAcroPDF2.Location = new System.Drawing.Point((int)(0.5 * this.Width),47);
-
+                
                 axAcroPDF2.gotoNextPage();
                 Page1 = 1;
                 Page2 = 2;
-
                 LastPage = getNrOfPages(fd.FileName);
+
+                SetSize();
             }
 
             else
@@ -238,18 +233,29 @@ namespace piano_pdf_tool
 
         public void FormResize(object sender, EventArgs e)
         {
-            axAcroPDF1.Height = Height - 47;
-            axAcroPDF2.Height = Height - 47;
+            SetSize();   
+        }
+
+        public void SetSize()
+        {
+            axAcroPDF1.Height = Height - 85;
+            axAcroPDF2.Height = Height - 85;
             axAcroPDF1.Width = (int)(Width * 0.5) - 20;
             axAcroPDF2.Width = (int)(Width * 0.5) - 20;
 
             axAcroPDF1.setViewScroll("FitB", (float)numericUpDown1.Value);
             axAcroPDF2.setViewScroll("FitB", (float)numericUpDown1.Value);
 
-            axAcroPDF2.Location = new System.Drawing.Point((int)(0.5 * this.Width), 47);
             axAcroPDF1.setZoom((float)numericUpDown1.Value);
             axAcroPDF2.setZoom((float)numericUpDown1.Value);
+
+            panel1.Height = Height - 85;
+            panel2.Height = Height - 85;
+            panel1.Width = (int)(Width * 0.5) - 20;
+            panel2.Width = (int)(Width * 0.5) - 20;
+            panel2.Location = new System.Drawing.Point((int)(0.5 * this.Width)-5, 38);
         }
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
