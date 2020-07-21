@@ -2,27 +2,46 @@
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
+using System.Runtime.InteropServices;   //prevent locking of the screen
+
 
 namespace piano_pdf_tool
 {
     public partial class Form1 : Form
     {
+        [DllImport("kernel32.dll")]
+        static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags); 
+
+        [FlagsAttribute]
+        public enum EXECUTION_STATE : uint
+        {
+            ES_AWAYMODE_REQUIRED = 0x00000040,
+            ES_CONTINUOUS = 0x80000000,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_SYSTEM_REQUIRED = 0x00000001
+        }
+
         static SerialPort Arduino1;     // serial connection
         private bool ArduinoReady;      // true if arduinoconnection is established
+        string filename;
 
         int LastPage;
         int Page1;
         int Page2;
 
-        string filename;
-
         public Form1()
         {
             InitializeComponent();
 
+            SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED); // prevents screen from locking
+
             button1.KeyDown += gotoNext;
             numericUpDown1.KeyDown += gotoNext;
+            button4.KeyDown += gotoNext;
+            comboBox1.KeyDown += gotoNext;
         }
+
+        #region Clickables
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -39,6 +58,10 @@ namespace piano_pdf_tool
 
                 this.Width = axAcroPDF1.Width + axAcroPDF2.Width;
 
+                axAcroPDF1.Width = (int)(0.5 * this.Width);
+                axAcroPDF2.Width = (int)(0.5 * this.Width);
+                axAcroPDF2.Location = new System.Drawing.Point((int)(0.5 * this.Width),47);
+
                 axAcroPDF2.gotoNextPage();
                 Page1 = 1;
                 Page2 = 2;
@@ -53,6 +76,23 @@ namespace piano_pdf_tool
             
         }
 
+        private void comboBox1_Click(object sender, EventArgs e) // if ports combobox clicked, get all ports
+        {
+            setInputPorts();
+        }
+
+        private void button4_Click(object sender, EventArgs e) // connect to Arduino and begin listening for serial commands.
+        {
+            setupArduino();
+            Arduino1.DataReceived += new SerialDataReceivedEventHandler(TurnPage);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            axAcroPDF1.setView("Fit");
+        }
+
+        #endregion
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             axAcroPDF1.setZoom((float)numericUpDown1.Value);
@@ -63,12 +103,12 @@ namespace piano_pdf_tool
         {
             if (e.KeyCode == Keys.D2)
             {
-                axAcroPDF1.gotoNextPage();
+                Scroll2Forward();
             }
 
             if (e.KeyCode == Keys.D1)
             {
-                axAcroPDF1.gotoPreviousPage();
+                Scroll2Backward();
             }
         }
 
@@ -140,23 +180,7 @@ namespace piano_pdf_tool
             }
         }
 
-        private void comboBox1_Click(object sender, EventArgs e) // if ports combobox clicked, get all ports
-        {
-            setInputPorts();
-        }
-
-        private void button4_Click(object sender, EventArgs e) // connect to Arduino and begin listening for serial commands.
-        {
-            setupArduino();
-            Arduino1.DataReceived += new SerialDataReceivedEventHandler(TurnPage);
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            axAcroPDF1.setView("Fit");
-        }
-
-        public void Scroll2Forward() // scrolls forward, but prevents the 2e page from being the first page and the 
+        public void Scroll2Forward()
         {
             if (Page1 < LastPage-2)
             {
@@ -172,11 +196,6 @@ namespace piano_pdf_tool
                 axAcroPDF1.setCurrentPage(Page1);
                 ShowEmpty();
             }
-        }
-
-        public void ShowEmpty()
-        {
-            axAcroPDF2.LoadFile("Empty");
         }
 
         public void Scroll2Backward()
@@ -198,6 +217,10 @@ namespace piano_pdf_tool
             }
         }
 
+        public void ShowEmpty()
+        {
+            axAcroPDF2.LoadFile("Empty");
+        }
 
         public int getNrOfPages(string filename)
         {
@@ -213,5 +236,24 @@ namespace piano_pdf_tool
             return pagecount;
         }
 
+        public void FormResize(object sender, EventArgs e)
+        {
+            axAcroPDF1.Height = Height - 47;
+            axAcroPDF2.Height = Height - 47;
+            axAcroPDF1.Width = (int)(Width * 0.5) - 20;
+            axAcroPDF2.Width = (int)(Width * 0.5) - 20;
+
+            axAcroPDF1.setViewScroll("FitB", (float)numericUpDown1.Value);
+            axAcroPDF2.setViewScroll("FitB", (float)numericUpDown1.Value);
+
+            axAcroPDF2.Location = new System.Drawing.Point((int)(0.5 * this.Width), 47);
+            axAcroPDF1.setZoom((float)numericUpDown1.Value);
+            axAcroPDF2.setZoom((float)numericUpDown1.Value);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); // turn on possibility to lock the screen again.
+        }
     }
 }
