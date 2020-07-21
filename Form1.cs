@@ -2,15 +2,16 @@
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
-using System.Runtime.InteropServices;  
-
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Linq;
 
 namespace piano_pdf_tool
 {
     public partial class Form1 : Form
     {
         [DllImport("kernel32.dll")]
-        static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags); 
+        static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
         [FlagsAttribute]
         public enum EXECUTION_STATE : uint
@@ -28,6 +29,7 @@ namespace piano_pdf_tool
         int LastPage;
         int Page1;
         int Page2;
+        string Port;
 
         public Form1()
         {
@@ -79,13 +81,35 @@ namespace piano_pdf_tool
         private void button4_Click(object sender, EventArgs e) // connect to Arduino and begin listening for serial commands.
         {
             setupArduino();
+            //Port = comboBox1.Text;
+            //Thread CheckForSerial = new Thread(ProbeSerialConnection);
+            //CheckForSerial.Start();
+
             Arduino1.DataReceived += new SerialDataReceivedEventHandler(TurnPage);
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        /*
+        public void ProbeSerialConnection()
         {
-            axAcroPDF1.setView("Fit");
+            bool connection = true; 
+            string[] allPortNames;
+
+            while(connection == true)
+            {
+                allPortNames = SerialPort.GetPortNames();
+                if (allPortNames.Contains(Port))
+                {
+                    connection = true;
+                    Thread.Sleep(1000);
+                }
+                else
+                {
+                    connection = false;
+                }
+            }
+            button4.Enabled = true; // enable 'connection' button
         }
+        */
 
         #endregion
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -109,14 +133,12 @@ namespace piano_pdf_tool
 
         public void TurnPage(object sender, System.IO.Ports.SerialDataReceivedEventArgs a)
         {
-            //int c = axAcroPDF1.AccessibilityObject.Bounds.Bottom;
             int b = Arduino1.ReadByte();
 
             if (b == 1)
             {
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    //axAcroPDF1.gotoNextPage();
                     Scroll2Forward();
                 });
 
@@ -126,7 +148,6 @@ namespace piano_pdf_tool
 
                 this.Invoke((MethodInvoker)delegate ()
                 {
-                    //axAcroPDF1.gotoPreviousPage();
                     Scroll2Backward();
                 });
             }
