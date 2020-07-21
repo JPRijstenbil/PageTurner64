@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
-using System.Runtime.InteropServices;   //prevent locking of the screen
+using System.Runtime.InteropServices;  
 
 
 namespace piano_pdf_tool
