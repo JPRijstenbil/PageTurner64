@@ -1,7 +1,9 @@
+// Reading of the switches & sending reads to pc via serial
+
 void setup() {
   Serial.begin(9600);
-  pinMode(2, INPUT);
-  pinMode(11, INPUT);
+  pinMode(2, INPUT);      // connect to ground via switch 1
+  pinMode(11, INPUT);     // connect to ground via switch 2
   pinMode(LED_BUILTIN, OUTPUT);
   delay(2000);
 }
@@ -25,5 +27,3 @@ void loop() {
     digitalWrite(LED_BUILTIN, LOW);
   }
 }
-
-// add debounce
