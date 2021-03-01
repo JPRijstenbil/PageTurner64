@@ -6,4 +6,7 @@ HOW:
 - Arduino is connected with usb B cable to usb port computer, sends serial command if pushbutton is pressed.
 - Windows application uses axAcroPDF to display pdf sheetmusic, and uses serial input to flip pages.
 
-This is my first GitHub project, feedback is appreciated!
+3D PRINT FILES: 
+https://grabcad.com/library/sheet-music-tool-1
+
+Feedback is appreciated!
