@@ -1,9 +1,9 @@
 WHAT: 
-Simple Windows application which lets you turn pages of pdf sheetmusic with a 3d printed footpedal equipped with an Arduino Uno
+Windows application which turns pages of pdf sheetmusic with a 3d printed footpedal
 
 HOW:
 - 3d printed footpedal contains an Arduino Uno, attached to two pushbuttons. 
 - Arduino is connected with usb B cable to usb port computer, sends serial command if pushbutton is pressed.
 - Windows application uses axAcroPDF to display pdf sheetmusic, and uses serial input to flip pages.
 
-This is my first small GitHub project, feedback is appreciated!
+This is my first GitHub project, feedback is appreciated!
