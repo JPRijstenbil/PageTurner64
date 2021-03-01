@@ -29,7 +29,6 @@ namespace piano_pdf_tool
         int LastPage;
         int Page1;
         int Page2;
-        string Port;
 
         public Form1()
         {
@@ -44,6 +43,7 @@ namespace piano_pdf_tool
             numericUpDown1.KeyDown += gotoNext;
             button4.KeyDown += gotoNext;
             comboBox1.KeyDown += gotoNext;
+
         }
 
         #region Clickables
@@ -222,20 +222,22 @@ namespace piano_pdf_tool
                 Page2 -= 2;
                 axAcroPDF1.setCurrentPage(Page1);
                 axAcroPDF2.setCurrentPage(Page2);
+                HideSideBars();
             }
             else if (Page1 > 2 && Page2 > LastPage)
             {
                 Page1 -= 2;
                 Page2 -= 2;
-                axAcroPDF2.src = filename;
-                axAcroPDF2.setCurrentPage(Page2);
+                axAcroPDF2.Show();
                 axAcroPDF1.setCurrentPage(Page1);
+                axAcroPDF2.setCurrentPage(Page2);
+                HideSideBars();
             }
         }
 
         public void ShowEmpty()
         {
-            axAcroPDF2.LoadFile("Empty");
+            axAcroPDF2.Hide();
         }
 
         public int getNrOfPages(string filename)
@@ -281,6 +283,12 @@ namespace piano_pdf_tool
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS); // turn on possibility to lock the screen again.
+       }
+
+        public void HideSideBars()
+        {
+            axAcroPDF1.setPageMode("none");
+            axAcroPDF2.setPageMode("none");
         }
     }
 }

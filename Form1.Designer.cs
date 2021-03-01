@@ -39,9 +39,10 @@
             this.axAcroPDF1.Enabled = true;
             this.axAcroPDF1.Location = new System.Drawing.Point(0,0);
             this.axAcroPDF1.Name = "axAcroPDF1";
-            this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
+            //this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
             this.axAcroPDF1.Size = new System.Drawing.Size(900, 950);
-            this.axAcroPDF1.TabIndex = 0;
+            //this.axAcroPDF1.TabIndex = 0;
+            
             // 
             // button1
             // 
@@ -77,9 +78,9 @@
             this.axAcroPDF2.Enabled = true;
             this.axAcroPDF2.Location = new System.Drawing.Point(0,0);
             this.axAcroPDF2.Name = "axAcroPDF2";
-            this.axAcroPDF2.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF2.OcxState")));
+            //this.axAcroPDF2.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF2.OcxState")));
             this.axAcroPDF2.Size = new System.Drawing.Size(900, 950);
-            this.axAcroPDF2.TabIndex = 8;
+            //this.axAcroPDF2.TabIndex = 8;
             // 
             // numericUpDown1
             // 
